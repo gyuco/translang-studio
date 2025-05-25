@@ -13,6 +13,7 @@ class JsonFilesScreen(tk.Toplevel):
         self.project_path = project_path
         self.json_files = []
         self.selected_item = None
+        self.master_file_path = None
         
         self.create_widgets()
         self.load_json_files()
@@ -26,6 +27,10 @@ class JsonFilesScreen(tk.Toplevel):
         # Titolo
         self.title_label = tk.Label(self.controls_frame, text=f"File JSON in {self.project_name}", font=("Helvetica", 16))
         self.title_label.pack(side=tk.LEFT, padx=5)
+        
+        # Pulsante "Traduzioni"
+        self.translations_button = tk.Button(self.controls_frame, text="Traduzioni", command=self.open_translations_screen, state=tk.DISABLED)
+        self.translations_button.pack(side=tk.RIGHT, padx=5)
         
         # Pulsante "Usa come master"
         self.master_button = tk.Button(self.controls_frame, text="Usa come master", command=self.set_as_master, state=tk.DISABLED)
@@ -107,9 +112,19 @@ class JsonFilesScreen(tk.Toplevel):
         # Se il progetto ha un master_file, aggiorna lo stato
         if project and "master_file" in project:
             master_file = project["master_file"]
+            self.master_file_path = master_file
             for i, file in enumerate(self.json_files):
                 if file["path"] == master_file:
                     self.json_files[i]["master"] = "✓"
+            
+            # Attiva il pulsante Traduzioni se c'è un file master
+            if self.master_file_path:
+                self.translations_button.config(state=tk.NORMAL)
+            else:
+                self.translations_button.config(state=tk.DISABLED)
+        else:
+            self.master_file_path = None
+            self.translations_button.config(state=tk.DISABLED)
         
         # Aggiorna la grid
         self.update_files_grid()
@@ -184,3 +199,14 @@ class JsonFilesScreen(tk.Toplevel):
             
         except Exception as e:
             messagebox.showerror("Errore", f"Impossibile aprire il file: {e}")
+    
+    def open_translations_screen(self):
+        if not self.master_file_path:
+            messagebox.showinfo("Informazione", "Seleziona prima un file master")
+            return
+        
+        # Importa qui per evitare importazioni circolari
+        from screens.translations_screen import TranslationsScreen
+        
+        # Apre la schermata delle traduzioni
+        TranslationsScreen(self, self.project_name, self.project_path, self.master_file_path)
