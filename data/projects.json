@@ -1,0 +1,13 @@
+[
+    {
+        "id": 2,
+        "name": "demo01",
+        "path": "/Users/giuseppeconcas/Desktop/i18n",
+        "master_file": "/Users/giuseppeconcas/Desktop/i18n/es.json"
+    },
+    {
+        "id": 3,
+        "name": "demo02",
+        "path": "/Users/giuseppeconcas/Desktop/python app - ai"
+    }
+]
